@@ -25,16 +25,47 @@
  *  });
  * ```
  */
+import React from "react"
 import { createRoot } from "react-dom/client"
 import App from "./components/App"
 import "./index.css"
+import Theme from "./ui/theme"
+import { ServicesContext } from "./utils/hooks/services"
 
-console.log(
-    '👋 This message is being logged by "renderer.js", included via webpack'
-)
-console.log(window.myAPI)
-console.log("🚀 [renderer] window.API = ", window.API) // @FIXME: Remove this line written on 2023-02-22 at 17:23
-const container = document.getElementById("app")
-container.textContent = "Hello world!"
-const root = createRoot(container)
-root.render(<App services={window.API} />)
+function start() {
+    console.log(
+        '👋 This message is being logged by "renderer.js", included via webpack'
+    )
+    const theme = new Theme({
+        colors: {
+            input: "#eefe",
+            neutral: { hue: 210, chroma: [5, 1], lightness: [20, 80] },
+            primary: {
+                hue: 210,
+                chroma: [80, 100],
+                lightness: [10, 90],
+            },
+            secondary: {
+                hue: 72,
+                chroma: [90, 100],
+                lightness: [40, 75],
+            },
+            tertiary: {
+                hue: [100, 100],
+                chroma: [100, 120],
+                lightness: [50, 120],
+            },
+        },
+    })
+    theme.apply()
+    const container = document.getElementById("app")
+    container.textContent = "Hello world!"
+    const root = createRoot(container)
+    root.render(
+        <ServicesContext.Provider value={window.API}>
+            <App />
+        </ServicesContext.Provider>
+    )
+}
+
+start()

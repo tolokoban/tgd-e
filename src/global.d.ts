@@ -1,5 +1,9 @@
 interface ApiInterface {
+    browse: {
+        openFile(options: Partial<BrowseOpenFileOptions>): Promise<string[]>
+    }
     fs: {
+        readBinary(path: string): Promise<ArrayBuffer>
         getDirContent(path: string): Promise<string[]>
     }
 }

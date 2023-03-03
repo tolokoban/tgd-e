@@ -1,20 +1,18 @@
 import { FileSystemServiceInterface } from "./types"
-import * as FS from "fs"
+import * as FS from "fs/promises"
 
 class FileSystemService implements FileSystemServiceInterface {
-    getDirContent(path: string): Promise<string[]> {
-        return new Promise((resolve, reject) => {
-            FS.readdir(
-                path,
-                {
-                    withFileTypes: true,
-                },
-                (err, files) => {
-                    if (err) reject(err)
-                    else resolve(files.map(file => file.name))
-                }
-            )
+    async readBinary(path: string): Promise<ArrayBuffer> {
+        const data = await FS.readFile(path)
+        return data
+    }
+
+    async getDirContent(path: string): Promise<string[]> {
+        const files = await FS.readdir(path, {
+            withFileTypes: true,
         })
+
+        return files.map(file => file.name)
     }
 }
 

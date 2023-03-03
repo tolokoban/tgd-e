@@ -359,6 +359,7 @@ export type TypeDef =
     | ["array" | "arr", TypeDef]
     | [`array(${number})` | `arr(${number})`, TypeDef]
     | ["map", TypeDef]
+    | ["partial", { [name: string]: TypeDef }]
     | { [name: string]: TypeDef }
 
 export function assertType<T>(
@@ -395,6 +396,9 @@ export function assertType<T>(
                 return
             case "|":
                 assertTypeAlternative(data, prefix, type)
+                return
+            case "partial":
+                assertTypePartial(data, prefix, type)
                 return
             default:
                 if (kind.startsWith("array(")) {
@@ -470,7 +474,7 @@ function assertTypeArray(
 function assertTypeSequence(
     data: unknown,
     prefix: string,
-    type: ["sequences" | "seq", TypeDef[]]
+    type: ["sequence" | "seq", TypeDef[]]
 ) {
     if (!Array.isArray(data))
         throw Error(
@@ -527,4 +531,26 @@ function assertTypeAlternative(
         }
     }
     throw lastException
+}
+
+function assertTypePartial(
+    data: unknown,
+    prefix: string,
+    [, type]: ["partial", { [name: string]: TypeDef }]
+) {
+    if (typeof data !== "object")
+        throw Error(
+            `Expected ${prefix} to be an object and not a ${typeof data}!`
+        )
+
+    const obj = data as { [key: string]: unknown }
+    for (const name of Object.keys(type)) {
+        if (typeof name !== "string") continue
+
+        const objValue = obj[name]
+        if (typeof objValue === "undefined") continue
+
+        const objType = type[name]
+        if (objType) assertType(objValue, type[name], `${prefix}.${name}`)
+    }
 }

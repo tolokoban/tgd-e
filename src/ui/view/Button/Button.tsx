@@ -1,5 +1,5 @@
 import React from "react"
-import Theme from "@/ui/theme"
+import Theme from "../../theme"
 import Style from "./Button.module.css"
 import { Circumference, OpaqueColorName } from "../../theme/styles/types"
 import { ColorStyleProps, styleColorVars } from "../../theme/styles/color"
