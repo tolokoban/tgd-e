@@ -1,0 +1,34 @@
+.Terminal {
+    margin: 1em;
+}
+
+.Terminal > article {
+    font-size: 150%;
+    border-radius: 1.5em;
+    background-color: var(--theme-color-primary-1);
+    margin: 0;
+    padding: 1em;
+    text-align: center;
+}
+
+.Terminal > article > span {
+    white-space: pre-wrap;
+    font-family: monospace;
+    color: var(--theme-color-secondary-9-2);
+    text-shadow: none;
+}
+
+.Terminal > article > span.highlight {
+    color: var(--theme-color-secondary-9);
+    text-shadow: var(--theme-color-primary-9) 0 0 0.25em;
+}
+
+.Terminal > footer {
+    display: flex;
+    justify-content: space-around;
+    align-items: flex-start;
+}
+
+.Terminal svg {
+    height: 10em;
+}
