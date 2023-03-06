@@ -10,7 +10,20 @@ export interface SpritesProps {
     className?: string
 }
 
+interface SpriteBounds {
+    x: number
+    y: number
+    width: number
+    height: number
+}
+
+interface SpriteItem extends SpriteBounds {
+    name: string
+}
+
 export default function Sprites({ className }: SpritesProps) {
+    const [sprites, setSprites] = React.useState<SpriteItem[]>([])
+    const [selection, setSelection] = React.useState("")
     const refCanvas = React.useRef<HTMLCanvasElement | null>(null)
     const { bitmap } = useServices()
     const [image, setImage] = React.useState<HTMLImageElement | null>(null)
@@ -26,35 +39,83 @@ export default function Sprites({ className }: SpritesProps) {
         const canvas = refCanvas.current
         if (!canvas || !image) return
 
+        function handleCanvasClick(evt: MouseEvent) {
+            const canvas = evt.target as HTMLCanvasElement
+            const rect = canvas.getBoundingClientRect()
+            const x = evt.pageX - rect.x
+            const y = evt.pageY - rect.y
+            const bounds = computeBounds(canvas, x, y)
+            const key = getKey(bounds)
+            const sprite = sprites.find(s => getKey(s) === key)
+            if (!sprite) {
+                setSprites([
+                    ...sprites,
+                    {
+                        ...bounds,
+                        name: `sprite${sprites.length + 1}`,
+                    },
+                ])
+            }
+            setSelection(key)
+        }
         const { width, height } = image
         canvas.width = width
         canvas.height = height
-        const ctx = getContext(canvas)
-        ctx.clearRect(0, 0, width, height)
-        ctx.drawImage(image, 0, 0)
+        paint(canvas, image, sprites, selection)
         canvas.addEventListener("dblclick", handleCanvasClick)
-    }, [image, refCanvas.current])
+        return () => canvas.removeEventListener("dblclick", handleCanvasClick)
+    }, [image, sprites, refCanvas.current])
+    paint(refCanvas.current, image, sprites, selection)
     return (
         <div className={$.join(className, Style.Sprites)}>
-            <canvas ref={refCanvas}></canvas>
+            <main>
+                <canvas ref={refCanvas}></canvas>
+            </main>
+            <aside>
+                {sprites.map(sprite => {
+                    const key = getKey(sprite)
+                    return (
+                        <button
+                            className={Style.SpriteButton}
+                            key={key}
+                            title={key}
+                            onClick={() => setSelection(key)}
+                        >
+                            {sprite.name}
+                        </button>
+                    )
+                })}
+            </aside>
         </div>
     )
 }
 
-function handleCanvasClick(evt: MouseEvent) {
-    const canvas = evt.target as HTMLCanvasElement
-    const rect = canvas.getBoundingClientRect()
-    const x = evt.pageX - rect.x
-    const y = evt.pageY - rect.y
-    console.log("🚀 [Sprites] evt = ", evt) // @FIXME: Remove this line written on 2023-03-06 at 17:06
-    console.log("🚀 [Sprites] x, y, rect.x, rect.y = ", x, y, rect.x, rect.y) // @FIXME: Remove this line written on 2023-03-06 at 17:06
-    const bounds = computeBounds(canvas, x, y)
-    console.log("🚀 [Sprites] bounds = ", bounds) // @FIXME: Remove this line written on 2023-03-06 at 17:21
+function paint(
+    canvas: HTMLCanvasElement | null,
+    image: HTMLImageElement | null,
+    sprites: SpriteItem[],
+    selection: string
+) {
+    if (!canvas) return
+
+    console.log("🚀 [Sprites] canvas = ", canvas) // @FIXME: Remove this line written on 2023-03-06 at 18:28
+    const { width, height } = canvas
     const ctx = getContext(canvas)
-    ctx.fillStyle = "#f903"
-    ctx.beginPath()
-    ctx.rect(bounds.x, bounds.y, bounds.width, bounds.height)
-    ctx.fill()
+    ctx.clearRect(0, 0, width, height)
+    ctx.drawImage(image, 0, 0)
+    const sprite = sprites.find(s => getKey(s) === selection)
+    if (sprite) {
+        console.log("🚀 [Sprites] selection, sprite = ", selection, sprite) // @FIXME: Remove this line written on 2023-03-06 at 18:28
+        ctx.fillStyle = "#0005"
+        ctx.beginPath()
+        ctx.rect(
+            sprite.x + 1,
+            sprite.y + 1,
+            sprite.width - 2,
+            sprite.height - 2
+        )
+        ctx.fill()
+    }
 }
 
 function getContext(canvas: HTMLCanvasElement) {
@@ -64,7 +125,11 @@ function getContext(canvas: HTMLCanvasElement) {
     return ctx
 }
 
-function computeBounds(canvas: HTMLCanvasElement, x: number, y: number) {
+function computeBounds(
+    canvas: HTMLCanvasElement,
+    x: number,
+    y: number
+): SpriteBounds {
     const ctx = getContext(canvas)
     const w = canvas.width
     const h = canvas.height
@@ -124,4 +189,9 @@ function computeBounds(canvas: HTMLCanvasElement, x: number, y: number) {
         width: x2 - x1 + 1,
         height: y2 - y1 + 1,
     }
+}
+
+function getKey(sprite: SpriteBounds) {
+    const { x, y, width, height } = sprite
+    return `${x},${y} ${width}x${height}`
 }

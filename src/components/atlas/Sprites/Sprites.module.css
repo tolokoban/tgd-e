@@ -1,3 +1,40 @@
 .Sprites {
-    
+    position: absolute;
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-start;
+    align-items: stretch;
+    gap: 0;
+}
+
+.Sprites > aside {
+    flex: 0 0 auto;
+    background-color: var(--theme-color-primary-3);
+    color: var(--theme-color-on-primary-3);
+    width: 400px;
+}
+
+.Sprites > main {
+    flex: 1 1 auto;
+    padding: 0;
+    overflow: auto;
+}
+
+.SpriteButton {
+    all: inherit;
+    width: calc(100% - 0.5em);
+    margin: 0.25em;
+    height: 2em;
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    border-radius: 0.125em;
+    background: linear-gradient(
+        to top,
+        var(--theme-color-secondary-7),
+        var(--theme-color-secondary-1)
+    );
+    border-top: 1px solid var(--theme-color-secondary-9-5);
+    color: var(--theme-color-on-secondary);
+    cursor: pointer;
 }

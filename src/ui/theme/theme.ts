@@ -109,7 +109,7 @@ export default class Theme {
         this.add(`color-${name}`, color)
         this.add(
             `color-on-${name}`,
-            `var(--theme-color-text-${Color.isLight(color) ? `dark` : "light"}`
+            `var(--theme-color-text-${Color.isLight(color) ? `dark` : "light"})`
         )
     }
 

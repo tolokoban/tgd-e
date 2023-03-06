@@ -38,6 +38,9 @@ const createWindow = (): void => {
 
     // Create the browser window.
     const mainWindow = new BrowserWindow({
+        fullscreenable: true,
+        x: 0,
+        y: 0,
         height: 1000,
         width: 1600,
         webPreferences: {
