@@ -1,7 +1,7 @@
 import BrowseService, { BrowseOpenFileOptions } from "./browse"
 import FileSystemService from "./fs"
 import { ipcMain, IpcMainInvokeEvent } from "electron"
-import { assertType, TypeDef } from "../utils/type-guards"
+import { assertType, TypeDef } from "../../utils/type-guards"
 
 export default class Server {
     constructor() {

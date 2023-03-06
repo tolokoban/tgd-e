@@ -29,6 +29,7 @@ import React from "react"
 import { createRoot } from "react-dom/client"
 import App from "./components/App"
 import "./index.css"
+import Service from "./service/service"
 import Theme from "./ui/theme"
 import { ServicesContext } from "./utils/hooks/services"
 
@@ -62,7 +63,7 @@ function start() {
     container.textContent = "Hello world!"
     const root = createRoot(container)
     root.render(
-        <ServicesContext.Provider value={window.API}>
+        <ServicesContext.Provider value={new Service()}>
             <App />
         </ServicesContext.Provider>
     )
