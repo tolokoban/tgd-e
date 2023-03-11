@@ -43,8 +43,8 @@ function start() {
             neutral: { hue: 210, chroma: [5, 1], lightness: [20, 80] },
             primary: {
                 hue: 210,
-                chroma: [80, 100],
-                lightness: [10, 90],
+                chroma: [100, 80],
+                lightness: [1, 30],
             },
             secondary: {
                 hue: 72,
@@ -59,14 +59,29 @@ function start() {
         },
     })
     theme.apply()
+    const service = new Service()
     const container = document.getElementById("app")
-    container.textContent = "Hello world!"
     const root = createRoot(container)
     root.render(
-        <ServicesContext.Provider value={new Service()}>
+        <ServicesContext.Provider value={service}>
             <App />
         </ServicesContext.Provider>
     )
+    removeSplashScreen()
+}
+
+function removeSplashScreen() {
+    const SPLASH_VANISHING_DELAY = 900
+    const splash = document.getElementById("tgd-logo")
+    if (!splash) return
+
+    splash.classList.add("vanish")
+    window.setTimeout(() => {
+        const parent = splash.parentNode
+        if (!parent) return
+
+        parent.removeChild(splash)
+    }, SPLASH_VANISHING_DELAY)
 }
 
 start()

@@ -1,7 +1,18 @@
 import { FileSystemServiceInterface } from "./types"
 import * as FS from "fs/promises"
+import JSON5 from "json5"
 
 class FileSystemService implements FileSystemServiceInterface {
+    async loadJSON<T>(path: string): Promise<T> {
+        const data = await FS.readFile(path)
+        const text = data.toString()
+        return JSON5.parse(text)
+    }
+
+    async saveJSON(path: string, data: unknown): Promise<void> {
+        await FS.writeFile(path, JSON.stringify(data))
+    }
+
     async readBinary(path: string): Promise<ArrayBuffer> {
         const data = await FS.readFile(path)
         return data

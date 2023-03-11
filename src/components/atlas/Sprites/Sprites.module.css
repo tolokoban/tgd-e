@@ -14,10 +14,10 @@
     width: 400px;
 }
 
-.Sprites > main {
+.main {
     flex: 1 1 auto;
     padding: 0;
-    overflow: auto;
+    overflow: hidden;
 }
 
 .SpriteButton {

@@ -3,6 +3,11 @@ interface ApiInterface {
         openFile(options: Partial<BrowseOpenFileOptions>): Promise<string[]>
     }
     fs: {
+        loadJSON<T>(
+            path: string,
+            guard: (data: unknown) => asserts data is T
+        ): Promise<T>
+        saveJSON(path: string, data: unknown): Promise<void>
         readBinary(path: string): Promise<ArrayBuffer>
         getDirContent(path: string): Promise<string[]>
     }

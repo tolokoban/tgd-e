@@ -5,6 +5,8 @@ import Button from "../../ui/view/Button"
 import { useServices } from "../../utils/hooks/services"
 import Pages from "../Pages"
 import AtlasSprites from "../atlas/Sprites"
+import { atlasMakeFromImagePath } from "../../format/atlas/atlas"
+import { replaceExtension } from "../../utils/path"
 
 // eslint-disable-next-line @typescript-eslint/no-empty-interface
 export interface AppProps {
@@ -12,13 +14,13 @@ export interface AppProps {
 }
 
 export default function App() {
-    const { browse } = useServices()
+    const { browse, fs } = useServices()
     const handleClick = async () => {
-        const files = await browse.openFile({
+        const files: string[] = await browse.openFile({
             filters: [
                 {
                     name: "Transparent Image",
-                    extensions: ["webp", "png"],
+                    extensions: ["webp", "png", "atlas"],
                 },
             ],
         })
@@ -26,7 +28,15 @@ export default function App() {
         const [file] = files
         if (!file) return
 
-        State.tools.atlas.imagePath.value = file
+        if (file.endsWith("atlas")) {
+            State.tools.atlas.path.value = file
+        } else {
+            const path = replaceExtension(file, "atlas")
+            // @TODO: If atlas already exists, do not recreate it.
+            const atlas = atlasMakeFromImagePath(file)
+            await fs.saveJSON(path, atlas)
+            State.tools.atlas.path.value = path
+        }
         State.page.value = "atlas-sprites"
     }
     return (

@@ -6,6 +6,17 @@ import { assertType, TypeDef } from "../../utils/type-guards"
 export default class Server {
     constructor() {
         this.register(
+            "fs/load-json",
+            (path: string) => FileSystemService.loadJSON(path),
+            ["string"]
+        )
+        this.register(
+            "fs/save-json",
+            (path: string, data: unknown) =>
+                FileSystemService.saveJSON(path, data),
+            ["string", "unknown"]
+        )
+        this.register(
             "fs/read-binary",
             (path: string) => FileSystemService.readBinary(path),
             ["string"]

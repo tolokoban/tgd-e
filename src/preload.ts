@@ -11,6 +11,17 @@ const API: ApiInterface = {
     },
 
     fs: {
+        async loadJSON<T>(
+            path: string,
+            guard: (data: unknown) => asserts data is T
+        ): Promise<T> {
+            const data = await ipcRenderer.invoke("fs/load-json", path)
+            guard(data)
+            return data
+        },
+        saveJSON(path: string, data: unknown): Promise<void> {
+            return ipcRenderer.invoke("fs/save-json", path, data)
+        },
         readBinary(path: string): Promise<ArrayBuffer> {
             return ipcRenderer.invoke("fs/read-binary", path)
         },

@@ -1,9 +1,9 @@
 import BitmapService from "./bitmap"
 
 export default class Service implements ApiInterface {
-    public readonly browse
+    public readonly browse: ApiInterface["browse"]
 
-    public readonly fs
+    public readonly fs: ApiInterface["fs"]
 
     public readonly bitmap: BitmapService
 

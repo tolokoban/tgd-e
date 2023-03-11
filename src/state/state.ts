@@ -4,7 +4,7 @@ export default {
     page: new AtomicState(""),
     tools: {
         atlas: {
-            imagePath: new AtomicState<string | null>(null),
+            path: new AtomicState<string | null>(null),
         },
     },
 }

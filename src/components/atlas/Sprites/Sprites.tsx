@@ -1,7 +1,15 @@
 import React from "react"
-import State from "../../../state"
+import {
+    atlasAddSprite,
+    atlasFindSprite,
+    spriteGetKey,
+    TgdSpriteBounds,
+    useTgdAtlas,
+} from "../../../format/atlas/atlas"
 import Theme from "../../../ui/theme"
+import Gesture, { TapEvent } from "../../../utils/gesture"
 import { useServices } from "../../../utils/hooks/services"
+import Scroller from "../../Scroller"
 import Style from "./Sprites.module.css"
 
 const $ = Theme.classNames
@@ -10,78 +18,71 @@ export interface SpritesProps {
     className?: string
 }
 
-interface SpriteBounds {
-    x: number
-    y: number
-    width: number
-    height: number
-}
-
-interface SpriteItem extends SpriteBounds {
-    name: string
-}
-
 export default function Sprites({ className }: SpritesProps) {
-    const [sprites, setSprites] = React.useState<SpriteItem[]>([])
-    const [selection, setSelection] = React.useState("")
+    const [atlas, setAtlas] = useTgdAtlas()
+    const [selection, setSelection] = React.useState<TgdSpriteBounds | null>(
+        null
+    )
     const refCanvas = React.useRef<HTMLCanvasElement | null>(null)
     const { bitmap } = useServices()
     const [image, setImage] = React.useState<HTMLImageElement | null>(null)
-    const imagePath = State.tools.atlas.imagePath.useValue()
     React.useEffect(() => {
+        if (!atlas) return
+
         const action = async () => {
-            const img = await bitmap.loadImage(imagePath)
+            const img = await bitmap.loadImage(atlas.image)
             setImage(img)
         }
         void action()
-    }, [imagePath, bitmap])
+    }, [atlas, bitmap])
     React.useEffect(() => {
         const canvas = refCanvas.current
         if (!canvas || !image) return
 
-        function handleCanvasClick(evt: MouseEvent) {
-            const canvas = evt.target as HTMLCanvasElement
-            const rect = canvas.getBoundingClientRect()
-            const x = evt.pageX - rect.x
-            const y = evt.pageY - rect.y
+        function handleCanvasClick({ x, y }: TapEvent) {
             const bounds = computeBounds(canvas, x, y)
-            const key = getKey(bounds)
-            const sprite = sprites.find(s => getKey(s) === key)
-            if (!sprite) {
-                setSprites([
-                    ...sprites,
-                    {
+            const key = spriteGetKey(bounds)
+            const sprite = atlasFindSprite(atlas, bounds)
+            if (!sprite)
+                setAtlas(
+                    atlasAddSprite(atlas, {
+                        id: key,
                         ...bounds,
-                        name: `sprite${sprites.length + 1}`,
-                    },
-                ])
-            }
-            setSelection(key)
+                        centerX: 0.5,
+                        centerY: 1,
+                    })
+                )
+            setSelection({ ...sprite })
         }
         const { width, height } = image
         canvas.width = width
         canvas.height = height
-        paint(canvas, image, sprites, selection)
-        canvas.addEventListener("dblclick", handleCanvasClick)
-        return () => canvas.removeEventListener("dblclick", handleCanvasClick)
-    }, [image, sprites, refCanvas.current])
-    paint(refCanvas.current, image, sprites, selection)
+        paint(canvas, image, atlasFindSprite(atlas, selection))
+        const gesture = new Gesture(canvas)
+        gesture.eventDoubleTap.addListener(handleCanvasClick)
+        return () => {
+            gesture.eventDoubleTap.removeListener(handleCanvasClick)
+            gesture.detach()
+        }
+    }, [image, atlas, refCanvas.current])
+    paint(refCanvas.current, image, selection)
+    const sprites = atlas?.sprites ?? []
     return (
         <div className={$.join(className, Style.Sprites)}>
-            <main>
+            <Scroller className={Style.main}>
                 <canvas ref={refCanvas}></canvas>
-            </main>
+            </Scroller>
             <aside>
                 {sprites.map(sprite => {
-                    const key = getKey(sprite)
+                    const { id } = sprite
                     return (
                         <button
                             className={Style.SpriteButton}
-                            key={key}
-                            title={key}
-                            onClick={() => setSelection(key)}
+                            key={id}
+                            title={id}
+                            onClick={() => setSelection({ ...sprite })}
                         >
-                            {sprite.name}
+                            {sprite.id}
                         </button>
                     )
                 })}
@@ -93,24 +94,20 @@ export default function Sprites({ className }: SpritesProps) {
 function paint(
     canvas: HTMLCanvasElement | null,
     image: HTMLImageElement | null,
-    sprites: SpriteItem[],
-    selection: string
+    sprite?: TgdSpriteBounds | null
 ) {
     if (!canvas) return
 
-    console.log("🚀 [Sprites] canvas = ", canvas) // @FIXME: Remove this line written on 2023-03-06 at 18:28
     const { width, height } = canvas
     const ctx = getContext(canvas)
     ctx.clearRect(0, 0, width, height)
     ctx.drawImage(image, 0, 0)
-    const sprite = sprites.find(s => getKey(s) === selection)
     if (sprite) {
-        console.log("🚀 [Sprites] selection, sprite = ", selection, sprite) // @FIXME: Remove this line written on 2023-03-06 at 18:28
         ctx.fillStyle = "#0005"
         ctx.beginPath()
         ctx.rect(
-            sprite.x + 1,
-            sprite.y + 1,
+            sprite.left + 1,
+            sprite.top + 1,
             sprite.width - 2,
             sprite.height - 2
         )
@@ -129,7 +126,7 @@ function computeBounds(
     canvas: HTMLCanvasElement,
     x: number,
     y: number
-): SpriteBounds {
+): TgdSpriteBounds {
     const ctx = getContext(canvas)
     const w = canvas.width
     const h = canvas.height
@@ -184,14 +181,9 @@ function computeBounds(
         }
     }
     return {
-        x: x1,
-        y: y1,
+        left: x1,
+        top: y1,
         width: x2 - x1 + 1,
         height: y2 - y1 + 1,
     }
-}
-
-function getKey(sprite: SpriteBounds) {
-    const { x, y, width, height } = sprite
-    return `${x},${y} ${width}x${height}`
 }
