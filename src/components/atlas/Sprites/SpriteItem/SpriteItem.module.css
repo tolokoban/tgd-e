@@ -1,0 +1,27 @@
+.SpriteItem {
+    background-color: var(--theme-color-neutral-5);
+    color: var(--theme-color-on-neutral-5);
+    margin: 0.25em;
+    border-radius: 0.5em;
+}
+
+.SpriteItem.Selected button {
+    font-weight: bolder;
+}
+
+.SpriteItem button {
+    all: unset;
+    width: 100%;
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+    gap: 1em;
+}
+
+.SpriteItem button > * {
+    flex: 0 0 auto;
+}
+
+.SpriteItem button > div {
+    flex: 1 1 auto;
+}

@@ -1,4 +1,1 @@
-{
-    image: "/home/tolokoban/Code/github/tgd-e/sprites-hero.webp",
-    sprites: [],
-}
+{image:'/home/tolokoban/Code/github/tgd-e/sprites-hero.webp',sprites:[{id:'795,27 (144×316)',left:795,top:27,width:144,height:316,centerX:0.5,centerY:1},{id:'559,27 (112×327)',left:559,top:27,width:112,height:327,centerX:0.5,centerY:1},{id:'20,30 (195×324)',left:20,top:30,width:195,height:324,centerX:0.5,centerY:1},{id:'292,28 (164×326)',left:292,top:28,width:164,height:326,centerX:0.5,centerY:1},{id:'1272,29 (267×314)',left:1272,top:29,width:267,height:314,centerX:0.5,centerY:1}]}

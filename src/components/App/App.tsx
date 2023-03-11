@@ -7,6 +7,7 @@ import Pages from "../Pages"
 import AtlasSprites from "../atlas/Sprites"
 import { atlasMakeFromImagePath } from "../../format/atlas/atlas"
 import { replaceExtension } from "../../utils/path"
+import Styles from "./App.module.css"
 
 // eslint-disable-next-line @typescript-eslint/no-empty-interface
 export interface AppProps {
@@ -40,7 +41,7 @@ export default function App() {
         State.page.value = "atlas-sprites"
     }
     return (
-        <Pages>
+        <Pages className={Styles.App}>
             <div>
                 <Button onClick={handleClick}>Select another directory</Button>
             </div>

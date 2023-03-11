@@ -46,16 +46,19 @@ export function atlasMakeFromImagePath(imagePath: string): TgdAtlas {
     }
 }
 
-export function spriteGetKey({
-    left,
-    top,
-    width,
-    height,
-}: TgdSpriteBounds): string {
+export function spriteGetKey(bounds: TgdSpriteBounds | null): string {
+    if (!bounds) return ""
+
+    const { left, top, width, height } = bounds
     return `${left},${top} (${width}×${height})`
 }
 
-export function atlasFindSprite(atlas: TgdAtlas, sprite: TgdSpriteBounds) {
+export function atlasFindSprite(
+    atlas: TgdAtlas,
+    sprite?: TgdSpriteBounds | null
+) {
+    if (!sprite) return undefined
+
     const key = spriteGetKey(sprite)
     return atlas.sprites.find(item => spriteGetKey(item) === key)
 }

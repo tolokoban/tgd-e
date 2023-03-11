@@ -9,8 +9,8 @@
 
 .Sprites > aside {
     flex: 0 0 auto;
-    background-color: var(--theme-color-primary-3);
-    color: var(--theme-color-on-primary-3);
+    background-color: var(--theme-color-neutral-3);
+    color: var(--theme-color-on-neutral-3);
     width: 400px;
 }
 

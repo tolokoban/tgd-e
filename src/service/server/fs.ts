@@ -10,7 +10,7 @@ class FileSystemService implements FileSystemServiceInterface {
     }
 
     async saveJSON(path: string, data: unknown): Promise<void> {
-        await FS.writeFile(path, JSON.stringify(data))
+        await FS.writeFile(path, JSON5.stringify(data))
     }
 
     async readBinary(path: string): Promise<ArrayBuffer> {

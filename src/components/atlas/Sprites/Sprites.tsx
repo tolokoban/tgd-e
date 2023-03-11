@@ -10,6 +10,8 @@ import Theme from "../../../ui/theme"
 import Gesture, { TapEvent } from "../../../utils/gesture"
 import { useServices } from "../../../utils/hooks/services"
 import Scroller from "../../Scroller"
+import SpriteItem from "./SpriteItem"
+import SrpiteItem from "./SpriteItem"
 import Style from "./Sprites.module.css"
 
 const $ = Theme.classNames
@@ -30,8 +32,8 @@ export default function Sprites({ className }: SpritesProps) {
         if (!atlas) return
 
         const action = async () => {
-            const img = await bitmap.loadImage(atlas.image)
-            setImage(img)
+            console.log("🚀 [Sprites] atlas.image = ", atlas.image) // @FIXME: Remove this line written on 2023-03-11 at 16:36
+            setImage(await bitmap.loadImage(atlas.image))
         }
         void action()
     }, [atlas, bitmap])
@@ -52,12 +54,12 @@ export default function Sprites({ className }: SpritesProps) {
                         centerY: 1,
                     })
                 )
-            setSelection({ ...sprite })
+            setSelection({ ...bounds })
         }
         const { width, height } = image
         canvas.width = width
         canvas.height = height
-        paint(canvas, image, atlasFindSprite(atlas, selection))
+        paint(canvas, image, selection)
         const gesture = new Gesture(canvas)
         gesture.eventDoubleTap.addListener(handleCanvasClick)
         return () => {
@@ -76,14 +78,12 @@ export default function Sprites({ className }: SpritesProps) {
                 {sprites.map(sprite => {
                     const { id } = sprite
                     return (
-                        <button
-                            className={Style.SpriteButton}
+                        <SpriteItem
                             key={id}
-                            title={id}
-                            onClick={() => setSelection({ ...sprite })}
-                        >
-                            {sprite.id}
-                        </button>
+                            sprite={sprite}
+                            selected={id === spriteGetKey(selection)}
+                            onSelection={setSelection}
+                        />
                     )
                 })}
             </aside>
@@ -94,24 +94,28 @@ export default function Sprites({ className }: SpritesProps) {
 function paint(
     canvas: HTMLCanvasElement | null,
     image: HTMLImageElement | null,
-    sprite?: TgdSpriteBounds | null
+    selection?: TgdSpriteBounds | null
 ) {
     if (!canvas) return
 
     const { width, height } = canvas
     const ctx = getContext(canvas)
     ctx.clearRect(0, 0, width, height)
-    ctx.drawImage(image, 0, 0)
-    if (sprite) {
-        ctx.fillStyle = "#0005"
+    console.log("🚀 [Sprites] image, selection = ", image, selection) // @FIXME: Remove this line written on 2023-03-11 at 17:02
+    if (image) ctx.drawImage(image, 0, 0)
+    if (selection) {
+        ctx.strokeStyle = "#0007"
+        ctx.fillStyle = "#fff7"
+        ctx.lineWidth = 1
         ctx.beginPath()
         ctx.rect(
-            sprite.left + 1,
-            sprite.top + 1,
-            sprite.width - 2,
-            sprite.height - 2
+            selection.left + 1,
+            selection.top + 1,
+            selection.width - 2,
+            selection.height - 2
         )
         ctx.fill()
+        ctx.stroke()
     }
 }
 
