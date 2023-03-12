@@ -9,6 +9,8 @@ import {
     useTgdAtlas,
 } from "../../../format/atlas/atlas"
 import Theme from "../../../ui/theme"
+import Tab from "../../../ui/view/Tab"
+import Tabs from "../../../ui/view/Tabs"
 import Gesture, { TapEvent } from "../../../utils/gesture"
 import { useServices } from "../../../utils/hooks/services"
 import Scroller from "../../Scroller"
@@ -67,6 +69,20 @@ export default function Sprites({ className }: SpritesProps) {
                         />
                     )
                 })}
+                <Tabs vertical>
+                    <Tab label="Hello">
+                        <div>Hello world</div>
+                    </Tab>
+                    <Tab label="Vive">
+                        <div>Vive le vent</div>
+                    </Tab>
+                    <Tab label="Cerise sur le gâteau">
+                        <div>J'aime bien les cerises.</div>
+                    </Tab>
+                    <Tab label="Gâteau aux pommes">
+                        <div>Dont j'ai le secret.</div>
+                    </Tab>
+                </Tabs>
             </aside>
         </div>
     )

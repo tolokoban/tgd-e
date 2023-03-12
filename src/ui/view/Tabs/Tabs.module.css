@@ -1,0 +1,78 @@
+.Tabs {
+    --custom-color-back: var(--theme-color-neutral-2);
+    --custom-color-text: var(--theme-color-on-neutral-2);
+    --custom-color-highlight-back: var(--theme-color-primary-5);
+    --custom-color-highlight-text: var(--theme-color-on-primary-5);
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: stretch;
+    gap: 0;
+    margin: 0.25em;
+}
+
+.Tabs.vertical {
+    flex-direction: row;
+}
+
+.Tabs > header {
+    flex: 0 0 auto;
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-start;
+    align-items: stretch;
+    flex-wrap: wrap-reverse;
+    padding: 0;
+}
+
+.Tabs.vertical > header {
+    flex-direction: column;
+}
+
+.Tabs > header > div {
+    background: var(--custom-color-back);
+    color: var(--custom-color-text);
+    border-top: 2px solid var(--custom-color-highlight-back);
+    border-radius: 2px 2px 0 0;
+    font-weight: bold;
+}
+
+.Tabs > header > button {
+    all: inherit;
+    display: inline-block;
+    cursor: pointer;
+    transition: all 0.2s;
+    opacity: 0.6;
+}
+
+.Tabs > header > button:hover,
+.Tabs > header > button:active {
+    background: var(--custom-color-highlight-back);
+    color: var(--custom-color-highlight-text);
+}
+
+.Tabs > header > button,
+.Tabs > header > div {
+    margin: 0;
+    padding: 0 0.5em;
+    display: grid;
+    place-items: center;
+    height: 2em;
+    max-height: 2em;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+}
+
+.Tabs.vertical > header > button,
+.Tabs.vertical > header > div {
+    writing-mode: vertical-rl;
+    text-orientation: mixed;
+}
+
+.Tabs > main {
+    flex: 1 1 auto;
+    padding: 0.5em;
+    background: var(--custom-color-back);
+    color: var(--custom-color-text);
+}
