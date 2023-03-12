@@ -13,6 +13,13 @@
 }
 
 .InputText:focus {
-    background-color: var(--theme-color-neutral-9);
-    color: var(--theme-color-on-neutral-9);
+    background-color: var(--theme-color-input);
+    color: var(--theme-color-on-input);
+    border: none;
+    outline: none;
+}
+
+.InputText.invalid {
+    background-color: var(--theme-color-error);
+    color: var(--theme-color-on-error);
 }

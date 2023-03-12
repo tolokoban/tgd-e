@@ -84,7 +84,7 @@ export function atlasAddSprite(
     }
     return {
         ...atlas,
-        sprites: newSprites,
+        sprites: newSprites.sort(compareSprites),
     }
 }
 
@@ -116,4 +116,12 @@ export function useTgdAtlas(): [
             fs.saveJSON(atlasPath, newAtlas)
         },
     ]
+}
+
+function compareSprites(a: TgdAtlasSprite, b: TgdAtlasSprite): number {
+    const idA = a.id.trim().toLowerCase()
+    const idB = b.id.trim().toLowerCase()
+    if (idA < idB) return -1
+    if (idA > idB) return +1
+    return 0
 }

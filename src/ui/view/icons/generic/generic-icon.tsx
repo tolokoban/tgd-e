@@ -1,9 +1,6 @@
 import * as React from "react"
 import { ColorStyleProps, styleColor } from "../../../theme/styles/color"
 import Style from "./generic-icon.module.css"
-import Theme from "../../../theme"
-
-const $ = Theme.classNames
 
 export type GenericIconProps = {
     className?: string

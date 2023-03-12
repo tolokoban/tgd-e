@@ -3,6 +3,8 @@ import {
     atlasAddSprite,
     atlasFindSprite,
     spriteGetKey,
+    TgdAtlas,
+    TgdAtlasSprite,
     TgdSpriteBounds,
     useTgdAtlas,
 } from "../../../format/atlas/atlas"
@@ -11,7 +13,6 @@ import Gesture, { TapEvent } from "../../../utils/gesture"
 import { useServices } from "../../../utils/hooks/services"
 import Scroller from "../../Scroller"
 import SpriteItem from "./SpriteItem"
-import SrpiteItem from "./SpriteItem"
 import Style from "./Sprites.module.css"
 
 const $ = Theme.classNames
@@ -28,6 +29,11 @@ export default function Sprites({ className }: SpritesProps) {
     const refCanvas = React.useRef<HTMLCanvasElement | null>(null)
     const { bitmap } = useServices()
     const [image, setImage] = React.useState<HTMLImageElement | null>(null)
+    const handleSpriteUpdate = (sprite: TgdAtlasSprite) => {
+        const newAtlas = atlasAddSprite(atlas, sprite)
+        // @TODO: Check that we don't have two sprites with the same name.
+        setAtlas(newAtlas)
+    }
     React.useEffect(() => {
         if (!atlas) return
 
@@ -37,6 +43,45 @@ export default function Sprites({ className }: SpritesProps) {
         }
         void action()
     }, [atlas, bitmap])
+    useAtlasCanvas(refCanvas, image, atlas, setAtlas, setSelection, selection)
+    paint(refCanvas.current, image, selection)
+    const sprites = atlas?.sprites ?? []
+    return (
+        <div className={$.join(className, Style.Sprites)}>
+            <Scroller className={Style.main}>
+                <canvas ref={refCanvas}></canvas>
+            </Scroller>
+            <aside>
+                {sprites.map(sprite => {
+                    const { id } = sprite
+                    return (
+                        <SpriteItem
+                            key={id}
+                            sprite={sprite}
+                            image={image}
+                            selected={
+                                spriteGetKey(sprite) === spriteGetKey(selection)
+                            }
+                            onSelection={setSelection}
+                            onUpdate={handleSpriteUpdate}
+                        />
+                    )
+                })}
+            </aside>
+        </div>
+    )
+}
+
+function useAtlasCanvas(
+    refCanvas: React.MutableRefObject<HTMLCanvasElement>,
+    image: HTMLImageElement,
+    atlas: TgdAtlas,
+    setAtlas: (
+        atlas: import("/home/tolokoban/Code/github/tgd-e/src/format/atlas/atlas").TgdAtlas
+    ) => void,
+    setSelection: React.Dispatch<React.SetStateAction<TgdSpriteBounds>>,
+    selection: TgdSpriteBounds
+) {
     React.useEffect(() => {
         const canvas = refCanvas.current
         if (!canvas || !image) return
@@ -67,28 +112,6 @@ export default function Sprites({ className }: SpritesProps) {
             gesture.detach()
         }
     }, [image, atlas, refCanvas.current])
-    paint(refCanvas.current, image, selection)
-    const sprites = atlas?.sprites ?? []
-    return (
-        <div className={$.join(className, Style.Sprites)}>
-            <Scroller className={Style.main}>
-                <canvas ref={refCanvas}></canvas>
-            </Scroller>
-            <aside>
-                {sprites.map(sprite => {
-                    const { id } = sprite
-                    return (
-                        <SpriteItem
-                            key={id}
-                            sprite={sprite}
-                            selected={id === spriteGetKey(selection)}
-                            onSelection={setSelection}
-                        />
-                    )
-                })}
-            </aside>
-        </div>
-    )
 }
 
 function paint(
